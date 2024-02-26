@@ -33,10 +33,6 @@ const Restaurant = new mongoose.Schema({
             }
         }],
         minLength:1
-    },
-    reservedCapacity:{
-        type: Number,
-        min: 1
     }
 })
 module.exports=mongoose.model("Restaurant",Restaurant)
