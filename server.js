@@ -1,13 +1,22 @@
 const express = require("express");
+const cookieParser = require("cookie-parser")
 const dotenv = require("dotenv");
-const app = express();
-const restaurantRoute = require("./routes/restaurant");
-const { connectDB } = require("./config/connectDB");
 dotenv.config({
     path:"./config/config.env"
 })
 
-connectDB();
+const restaurantRoute = require("./routes/restaurant");
+const authRoute = require("./routes/auth");
+const { connectDB } = require("./config/connectDB");
 
+const app = express();
+
+connectDB();
+// const {dayToMilliseconds} = require("./utils/time")
+// console.log(dayToMilliseconds(process.env.JWT_EXPIRING_DAYS));
+
+app.use(express.json())
+app.use(cookieParser());
 app.use("/api/v1/restaurants",restaurantRoute);
-app.listen(9999);
+app.use("/api/v1/auth",authRoute);
+app.listen(process.env.PORT);

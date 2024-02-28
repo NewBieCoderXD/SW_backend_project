@@ -3,12 +3,14 @@ const {timeRegex,invalidTimeMsg} = require("../config/constants")
 const Restaurant = new mongoose.Schema({
     name:{
         type: String,
+        required:true,
         unique: true,
         minLength: 1
     },
     address:{
         type: String,
-        unique: true
+        unique: true,
+        required:true
     },
     menu:{
         type: [String]

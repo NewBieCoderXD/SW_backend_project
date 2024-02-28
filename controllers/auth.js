@@ -1,7 +1,7 @@
 const User = require('../models/User');
 const Reservation = require('../models/Reservation');
 const jwt = require("jsonwebtoken");
-
+const {dayToMilliseconds} = require("../utils/time")
 
 const tokenCookieOptions = {
     maxAge: dayToMilliseconds(process.env.JWT_EXPIRING_DAYS),
@@ -10,17 +10,17 @@ const tokenCookieOptions = {
 if(process.env.DEPLOY_MODE=="production"){
     tokenCookieOptions.secure=true;
 }
-
+console.log(tokenCookieOptions)
 //@desc   : Register User
 //@route  : POST /api/v1/auth/register
 //@access : Public
 exports.register = async (req,res,next) => {
     try {
-        const {name, email, password, role} = req.body;
+        const {username, email, password, role} = req.body;
         
-        const user = await User.create({name, email, password, role});
+        const user = await User.create({username, email, password, role});
 
-        sendTokenResponse(user,200,res);
+        responseWithToken(user,200,res);
     } catch(err) {
         res.status(400).json({success: false});
         console.log(err.stack);
@@ -46,8 +46,10 @@ exports.login = async (req,res,next)=>{
     if(!isMatch){
         return res.status(401).json({success: false, msg: "Wrong password"});
     }
+    responseWithToken(user,200,res)
 }
 function responseWithToken(user,statusCode,res){
+    console.log(process.env.JWT_SECRET)
     const {email,password} = user;
     const signedJwt = jwt.sign({email,password},process.env.JWT_SECRET,{
         expiresIn: process.env.JWT_EXPIRING_DAYS+"d"

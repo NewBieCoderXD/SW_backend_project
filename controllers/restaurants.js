@@ -4,7 +4,7 @@ const Restaurant = require('../models/Restaurant');
 //@route  : GET /api/v1/restaurant
 //@access : Public
 exports.getRestaurants = async (req,res,next) => {
-    const restaurants = await Restaurtant.find();
+    const restaurants = await Restaurant.find();
     res.status(200).json({
         success: true,
         count: restaurants.length,
