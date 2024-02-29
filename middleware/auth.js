@@ -14,12 +14,21 @@ exports.checkToken = async (req,res,next) =>{
     try{
         const decoded = jwt.verify(token,process.env.JWT_SECRET);
 
-        console.log(decoded);
-
         req.user = await User.findById(decoded.id);
 
         next();
     }catch(err){
         return res.status(401).json({success: false, message: 'Not authorize to access this route'});
+    }
+}
+exports.checkRole=function(...roles){
+    return function(req,res,next){
+        if(roles.includes(req.user.role)){
+            return next();
+        }
+        res.status(401).json({
+            success:false,
+            message:"Unauthorized"
+        })
     }
 }

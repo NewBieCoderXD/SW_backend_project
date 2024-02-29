@@ -67,7 +67,6 @@ exports.getMe = async function(req,res,next){
     return res.status(200).json(req.user);
 }
 function responseWithToken(user,statusCode,res){
-    console.log(process.env.JWT_SECRET)
     const {_id,email,password} = user;
     const signedJwt = jwt.sign({
         id:_id,

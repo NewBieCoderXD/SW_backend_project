@@ -11,17 +11,23 @@ const Reservation = new mongoose.Schema({
         ref:"Restaurant"
     },
     reservationDate:{
+        required: true,
         type: Date
     },
     reservationPeriod:{
-        startTime:{
-            type: String,
-            match: [timeRegex,invalidTimeMsg]
-        },
-        endTime:{
-            type: String,
-            match: [timeRegex,invalidTimeMsg]
-        }
+        type: new mongoose.Schema({
+            startTime:{
+                type: String,
+                match: [timeRegex,invalidTimeMsg],
+                required: true
+            },
+            endTime:{
+                type: String,
+                match: [timeRegex,invalidTimeMsg],
+                required: true
+            }
+        },{_id:false}),
+        required:true
     }
 })
 module.exports=mongoose.model("Reservation",Reservation)
