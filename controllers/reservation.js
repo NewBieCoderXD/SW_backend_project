@@ -51,3 +51,47 @@ exports.addReservation = async function(req,res,next){
         })
     }
 }
+exports.updateReservation = async function(req,res,next){
+    try{
+        delete req.body.reservorId;
+        let filterQuery = {
+            _id:req.params.id
+        };
+        if(req.user.role!="admin"){
+            filterQuery.reservorId=req.user.id;
+        }
+        const reservation = await Reservation.findOneAndUpdate(
+        filterQuery,
+        req.body,
+        {
+            new:true,
+        })
+        if(!reservation){
+            return res.status(400).json({
+                success:false,
+                message:"reservation not found"
+            })
+        }
+        res.status(200).json({
+            success:true,
+            data:reservation
+        })
+    }
+    catch(err){
+        console.log(err)
+        res.status(400).json({
+            success:false
+        })
+    }
+}
+exports.deleteReservation = async function(req,res,next){
+    try{
+
+    }
+    catch(err){
+        console.log(err)
+        res.status(400).json({
+            success:false
+        })
+    }
+}
