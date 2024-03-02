@@ -11,7 +11,7 @@ exports.checkSuperUserToken = async function(req,res,next){
             req.isSuperUser=true;
         }
     }catch(err){
-        console.log(err)
+        // console.log(err)
     }
     finally{
         next();
