@@ -1,6 +1,7 @@
 const mongoose = require("mongoose")
 const bcrypt = require("bcrypt");
 const validator = require("email-validator");
+const Reservation = require("./Reservation");
 const UserSchema = new mongoose.Schema({
     username:{
         type:String,
@@ -42,4 +43,10 @@ UserSchema.methods.matchPassword=async function(inputPassword){
     // console.log(inputPassword,this.password)
     return await bcrypt.compare(inputPassword,this.password);
 }
+UserSchema.pre("deleteOne",async function(next){
+    await Reservation.deleteMany({
+        reservorId: this._id
+    });
+    next()
+})
 module.exports=mongoose.model('User',UserSchema);

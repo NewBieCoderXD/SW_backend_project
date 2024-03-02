@@ -30,10 +30,16 @@ const Restaurant = new mongoose.Schema({
         minLength:1
     }
 })
-Restaurant.pre("deleteOne",{document:true, query:false},async function(){
-    console.log("called!!!",this._id);
+Restaurant.pre("deleteOne",{document:true, query:false},async function(next){
     const result = await Reservation.deleteMany({
         restaurantId: this._id
     });
+    next()
+})
+Restaurant.virtual("reservations",{
+    ref:"Reservation",
+    localField:"_id",
+    foreignField:"restaurantId",
+    justOne:false
 })
 module.exports=mongoose.model("Restaurant",Restaurant)

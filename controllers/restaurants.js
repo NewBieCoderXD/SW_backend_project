@@ -22,32 +22,33 @@ exports.getRestaurants = async (req,res,next) => {
         const sortBy = req.query.sort.split(',').join(' ');
         query = query.sort(sortBy);
     } else {
-        query = query.sort('-createdAt');
+        query = query.sort('name');
     }
 
     const page = parseInt(req.query.page,10) || 1;
-    const limit = parseInt(req.query.limit,10) || 25;
+    const limit = parseInt(req.query.limit,10) || 3;
     const startIndex = (page-1) * limit;
     const endIndex = page * limit;
 
     try {
-        const total = await Restaurant.countDocuments();
+        const total = await Restaurant.countDocuments(query);
         query = query.skip(startIndex).limit(limit);
         
-        const res = await query;
+        const result = await query;
 
-        const pagination = {};
+        const pagination = {limit};
 
         if (endIndex < total){
-            pagination.next = {page: page+1, limit}
+            pagination.next = {page: page+1}
         }
 
         if (startIndex > 0){
-            pagination.prev = {page: page-1, limit}
+            pagination.prev = {page: page-1}
         }
 
-        res.status(200).json({success: true, count: res.length, data: res});
+        res.status(200).json({success: true, count: result.length, pagination, data: result});
     } catch(err) {
+        console.log(err)
         res.status(400).json({success: false});
     }
 }

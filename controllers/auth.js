@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const Reservation = require('../models/Reservation');
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 const {dayToMilliseconds} = require("../utils/time")
 
 const tokenCookieOptions = {
@@ -17,6 +18,12 @@ exports.register = async (req,res,next) => {
     try {
         const {username, email, password, role} = req.body;
         
+        if(role=="admin" && !req.isSuperUser){
+            return res.status(400).json({
+                success:false,
+                message:"not authorized"
+            })
+        }
         const user = await User.create({username, email, password, role});
 
         responseWithToken(user,200,res);
@@ -54,6 +61,33 @@ exports.login = async (req,res,next)=>{
     }
     responseWithToken(user,200,res)
 }
+
+//@desc   : Login superuser
+//@route  : POST /api/v1/auth/superuser/login
+//@access : Private
+exports.superUserLogin = async function(req,res,next){
+    const isMatch = await bcrypt.compare(req.body,process.env.SUPERUSER_PASSWORD);
+    if(!isMatch){
+        return res.status(400).json({
+            success:false,
+            message:"wrong password"
+        })
+    }
+    const user = {
+        superuser: "superuser"
+    }
+    responseWithTokenSuperUser(user,200,res);
+}
+
+//@desc   : logout
+//@route  : POST /api/v1/auth/logout
+//@access : Private
+exports.logout = async function(req,res,next){
+    res.status(200).clearCookie("token").json({
+        success:true
+    })
+}
+
 //@desc   : get user data
 //@route  : GET /api/v1/auth/me
 //@access : Private
@@ -66,6 +100,27 @@ exports.getMe = async function(req,res,next){
     }
     return res.status(200).json(req.user);
 }
+
+//@desc   : delete user account
+//@route  : DELETE /api/v1/auth/deleteAccount
+//@access : Private
+exports.deleteAccount = async function(req,res,next){
+    try{
+        await User.deleteOne({
+            username:req.params.username,
+            role:"user"
+        });
+        res.status(200).json({
+            success:true
+        })
+    }
+    catch(err){
+        res.status(400).json({
+            success:false
+        })
+    }
+}
+
 function responseWithToken(user,statusCode,res){
     const {_id,email,password} = user;
     const signedJwt = jwt.sign({
@@ -74,6 +129,17 @@ function responseWithToken(user,statusCode,res){
         password
     },process.env.JWT_SECRET,{
         expiresIn: process.env.JWT_EXPIRING_DAYS+"d"
+    });
+    res.cookie("token",signedJwt,tokenCookieOptions);
+    res.status(statusCode).json({
+        success: true,
+        token: signedJwt
+    })
+}
+
+function responseWithTokenSuperUser(superuser,statusCode,res){
+    const signedJwt = jwt.sign(superuser,process.env.JWT_SECRET,{
+        expiresIn: "1h"
     });
     res.cookie("token",signedJwt,tokenCookieOptions);
     res.status(statusCode).json({

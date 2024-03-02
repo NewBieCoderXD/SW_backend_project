@@ -4,13 +4,14 @@ const Restaurant = require("../models/Restaurant");
 exports.getReservations = async function(req,res,next){
     try{
         const restaurantId = req.body.restaurantId || req.params.restaurantId
-        let filerQuery = {
-            reservorId:req.user.id
-        };
-        if(restaurantId){
-            filerQuery.restaurantId=restaurantId
+        let filterQuery = {};
+        if(req.user.role!="admin"){
+            filterQuery.reservorId=req.user.id
         }
-        let reservations = await Reservation.find(filerQuery)
+        if(restaurantId){
+            filterQuery.restaurantId=restaurantId
+        }
+        let reservations = await Reservation.find(filterQuery)
         res.status(200).json({
             success:true,
             data:reservations

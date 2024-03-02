@@ -1,6 +1,22 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-
+exports.checkSuperUserToken = async function(req,res,next){
+    let token;
+    if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')){
+        token = req.headers.authorization.split(' ')[1];
+    }
+    try{
+        const decoded = jwt.verify(token,process.env.JWT_SECRET);
+        if(decoded.superuser == "superuser"){
+            req.isSuperUser=true;
+        }
+    }catch(err){
+        console.log(err)
+    }
+    finally{
+        next();
+    }
+}
 exports.checkToken = async (req,res,next) =>{
     let token;
     if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')){
