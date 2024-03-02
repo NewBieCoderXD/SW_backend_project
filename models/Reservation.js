@@ -1,6 +1,5 @@
 const mongoose = require("mongoose")
-const validator = require("email-validator");
-const {timeRegex,invalidTimeMsg} = require("../config/constants")
+const PeriodSubSchema = require("./Period")
 const Reservation = new mongoose.Schema({
     reservorId:{
         type: mongoose.Schema.ObjectId,
@@ -15,18 +14,7 @@ const Reservation = new mongoose.Schema({
         type: Date
     },
     reservationPeriod:{
-        type: new mongoose.Schema({
-            startTime:{
-                type: String,
-                match: [timeRegex,invalidTimeMsg],
-                required: true
-            },
-            endTime:{
-                type: String,
-                match: [timeRegex,invalidTimeMsg],
-                required: true
-            }
-        },{_id:false}),
+        type: PeriodSubSchema,
         required:true
     }
 })

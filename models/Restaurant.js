@@ -1,5 +1,7 @@
 const mongoose = require("mongoose")
 const {timeRegex,invalidTimeMsg} = require("../config/constants")
+const PeriodSubSchema = require("./Period")
+const Reservation = require("./Reservation")
 const Restaurant = new mongoose.Schema({
     name:{
         type: String,
@@ -24,17 +26,14 @@ const Restaurant = new mongoose.Schema({
         match: [timeRegex,invalidTimeMsg]
     },
     availableReservationPeriod:{
-        type: [{
-            startTime:{
-                type: String,
-                match: [timeRegex,invalidTimeMsg]
-            },
-            endTime:{
-                type: String,
-                match: [timeRegex,invalidTimeMsg]
-            }
-        }],
+        type: [PeriodSubSchema],
         minLength:1
     }
+})
+Restaurant.pre("deleteOne",{document:true, query:false},async function(){
+    console.log("called!!!",this._id);
+    const result = await Reservation.deleteMany({
+        restaurantId: this._id
+    });
 })
 module.exports=mongoose.model("Restaurant",Restaurant)

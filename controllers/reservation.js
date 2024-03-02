@@ -1,4 +1,5 @@
-const Reservation = require("../models/Reservation")
+const Reservation = require("../models/Reservation");
+const Restaurant = require("../models/Restaurant");
 
 exports.getReservations = async function(req,res,next){
     try{
@@ -24,7 +25,7 @@ exports.getReservations = async function(req,res,next){
 }
 exports.addReservation = async function(req,res,next){
     try{
-        const {restaurantId,reservationPeriod,reservationDate} = req.body;
+        let {restaurantId,reservationPeriod,reservationDate,restaurantName} = req.body;
         const reservorId = req.user.id
         let existingReservations = Reservation.find({reservorId});
         if(await Reservation.countDocuments(existingReservations)>=3 && req.user.role!="admin"){
@@ -32,6 +33,11 @@ exports.addReservation = async function(req,res,next){
                 success:false,
                 message:"reservations exceeding limits"
             })
+        }
+        if(!restaurantId && restaurantName){
+            const restaurant = await Restaurant.findOne({name:req.body.restaurantName}).select("id")
+            console.log(restaurant);
+            restaurantId=restaurant.id;
         }
         const reservation = await Reservation.create({
             restaurantId,

@@ -30,8 +30,7 @@ const UserSchema = new mongoose.Schema({
         default: Date.now
     },
     phone:{
-        type: [String],
-        minLength: [1,'no phone provided']
+        type: [String]
     }
 })
 UserSchema.pre("save",async function(next){

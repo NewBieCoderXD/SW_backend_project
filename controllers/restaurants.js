@@ -4,7 +4,8 @@ const Restaurant = require('../models/Restaurant');
 //@route  : GET /api/v1/restaurant
 //@access : Public
 exports.getRestaurants = async (req,res,next) => {
-    const restaurants = await Restaurant.find();
+    console.log(req.query)
+    const restaurants = await Restaurant.find(req.query);
     res.status(200).json({
         success: true,
         count: restaurants.length,
@@ -34,8 +35,16 @@ exports.getRestaurant = async (req,res,next) => {
 //@route  : POST /api/v1/restaurants
 //@access : Private
 exports.createRestaurant = async (req,res,next) => {
-    const restaurant = await Restaurant.create(req.body);
-    res.status(201).json({success: true, data: restaurant});
+    try{
+        const restaurant = await Restaurant.create(req.body);
+        res.status(201).json({success: true, data: restaurant});
+    }
+    catch(err){
+        res.status(400).json({
+            success:false,
+            message:"restaurant with this name already exists"
+        })
+    }
 }
 
 //@desc   : Update a restaurant
@@ -60,12 +69,16 @@ exports.updateRestaurant = async (req,res,next) => {
 //@access : Private
 exports.deleteRestaurant = async (req,res,next) => {
     try {
-        const restaurant = await Restaurant.findByIdAndDelete(req.params.id);
+        let restaurant
+        if(req.params.id){
+            restaurant = await Restaurant.findById(req.params.id);
+        }
         
         if(!restaurant){
             return res.status(404).json({success: false, message: `Not found restaurant with id ${req.params.id}`});
         }
-
+        
+        await restaurant.deleteOne();
         res.status(200).json({success: true, data: {}});
     } catch(err) {
         res.status(400).json({success: false, message: 'Not valid ID'});
