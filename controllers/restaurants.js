@@ -4,13 +4,26 @@ const Restaurant = require('../models/Restaurant');
 //@route  : GET /api/v1/restaurant
 //@access : Public
 exports.getRestaurants = async (req,res,next) => {
-    console.log(req.query)
-    const restaurants = await Restaurant.find(req.query);
-    res.status(200).json({
-        success: true,
-        count: restaurants.length,
-        data: restaurants
-    });
+    let query;
+    const reqQuery = {...req.query};
+    const removeFields = ['select','sort','page','limit'];
+    removeFields.forEach(params => delete reqQuery[params]);
+    console.log(reqQuery);
+
+    let queryStr = JSON.stringify(reqQuery);
+    queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`);
+    query = Restaurant.find(JSON.parse(queryStr)).populate('reservations');
+
+    if (req.query.select){
+        const fields = req.query.select.split(',').join(' ');
+        query = query.select(fields);
+    }
+    if (req.query.sort){
+        const sortBy = req.query.sort.split(',').join(' ');
+        query = query.sort(sortBy);
+    } else {
+        query = query.sort('-createdAt');
+    }
 }
 
 //@desc   : Get a restaurant
