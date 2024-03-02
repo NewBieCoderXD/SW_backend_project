@@ -24,6 +24,32 @@ exports.getRestaurants = async (req,res,next) => {
     } else {
         query = query.sort('-createdAt');
     }
+
+    const page = parseInt(req.query.page,10) || 1;
+    const limit = parseInt(req.query.limit,10) || 25;
+    const startIndex = (page-1) * limit;
+    const endIndex = page * limit;
+
+    try {
+        const total = await Restaurant.countDocuments();
+        query = query.skip(startIndex).limit(limit);
+        
+        const res = await query;
+
+        const pagination = {};
+
+        if (endIndex < total){
+            pagination.next = {page: page+1, limit}
+        }
+
+        if (startIndex > 0){
+            pagination.prev = {page: page-1, limit}
+        }
+
+        res.status(200).json({success: true, count: res.length, data: res});
+    } catch(err) {
+        res.status(400).json({success: false});
+    }
 }
 
 //@desc   : Get a restaurant
