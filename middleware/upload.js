@@ -4,7 +4,13 @@ const { getBucket } = require('../config/connectDB');
 const Files = require('../models/Files');
 const storage = new GridFsStorage({ 
     url:process.env.MONGO_URI,
-    file: (req,file)=>{
+    file: async (req,file)=>{
+        const query = await Files.findOne({
+            filename: req.params.id
+        })
+        if(query){
+            await getBucket().delete(query._id);
+        }
         return {
             filename: req.params.id
         }
@@ -13,24 +19,19 @@ const storage = new GridFsStorage({
 // exports.upload = multer({storage });
 exports.upload=function(field,mimeTypes){
     return async function(req,res,next){
-        const query = await Files.findOne({
-            filename: req.params.id
-        })
-        if(query){
-            await getBucket().delete(query._id);
-        }
-
-        const upload = multer({storage}).single(field);
+        const upload = multer({
+            storage,
+            fileFilter:function(req,file,callback){
+                if(!mimeTypes.includes(file.mimetype)){
+                    return callback(new Error("file types not supported"),false)
+                }
+                callback(null,true)
+            }
+        }).single(field);
         upload(req,res,function(err){
             if(err){
-                res.status(400).json({
+                return res.status(400).json({
                     success:false
-                })
-            }
-            if(!mimeTypes.includes(req.file.mimetype)){
-                return res.status(415).json({
-                    success:false,
-                    message:"file types not supported"
                 })
             }
             next()
