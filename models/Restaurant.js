@@ -29,6 +29,9 @@ const Restaurant = new mongoose.Schema({
         type: [PeriodSubSchema],
         minLength:1
     }
+},{
+    toJSON: {virtuals:true},
+    toObject: {virtuals:true}
 })
 Restaurant.pre("deleteOne",{document:true, query:false},async function(next){
     const result = await Reservation.deleteMany({

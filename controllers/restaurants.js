@@ -1,3 +1,4 @@
+const { populate } = require('../models/Reservation');
 const Restaurant = require('../models/Restaurant');
 
 //@desc   : Get all restaurants
@@ -8,11 +9,23 @@ exports.getRestaurants = async (req,res,next) => {
     const reqQuery = {...req.query};
     const removeFields = ['select','sort','page','limit'];
     removeFields.forEach(params => delete reqQuery[params]);
-    console.log(reqQuery);
 
     let queryStr = JSON.stringify(reqQuery);
     queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`);
-    query = Restaurant.find(JSON.parse(queryStr)).populate('reservations');
+    query = Restaurant.find(JSON.parse(queryStr));
+
+    if(req.user){
+        let populateQuery = {
+            path:'reservations'
+        }
+        if(req.user.role!="admin"){
+            populateQuery.match={
+                reservorId: req.user._id
+            }
+        }
+        // console.log(populateQuery);
+        query = query.populate(populateQuery)
+    }
 
     if (req.query.select){
         const fields = req.query.select.split(',').join(' ');

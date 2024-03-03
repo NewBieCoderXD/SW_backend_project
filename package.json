@@ -7,7 +7,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon server.js",
     "deploy": "node server.js",
-    "newman setup": "newman run \"https://api.postman.com/collections/17374712-3b8957fa-63c8-4010-a7d5-6e80184f3e29?apikey=PMAK-65e32a57cb2b2000013b7b4c-38c5eaeb94dfa29b1ff95decb168429f27\" -e \"https://api.postman.com/environments/17374712-2d65732e-e417-419e-97f1-026f5fe29d08?apikey=PMAK-65e32a57cb2b2000013b7b4c-38c5eaeb94dfa29b1ff95decb168429f27"
+    "newman-setup": "newman run \"https://api.postman.com/collections/17374712-3b8957fa-63c8-4010-a7d5-6e80184f3e29?apikey=PMAK-65e32a57cb2b2000013b7b4c-38c5eaeb94dfa29b1ff95decb168429f27\" -e \"https://api.postman.com/environments/17374712-2d65732e-e417-419e-97f1-026f5fe29d08?apikey=PMAK-65e32a57cb2b2000013b7b4c-38c5eaeb94dfa29b1ff95decb168429f27\"",
+    "newman-user-test": "newman run \"https://api.postman.com/collections/17374712-bdb0a617-37be-45d3-8ad0-9a6145485a32?apikey=PMAK-65e32a57cb2b2000013b7b4c-38c5eaeb94dfa29b1ff95decb168429f27\" -e \"https://api.postman.com/environments/17374712-2d65732e-e417-419e-97f1-026f5fe29d08?apikey=PMAK-65e32a57cb2b2000013b7b4c-38c5eaeb94dfa29b1ff95decb168429f27\"",
+    "newman-admin-test": "newman run \"https://api.postman.com/collections/17374712-e48b01e4-3f47-41ac-b760-76f0c6620b87?apikey=PMAK-65e32a57cb2b2000013b7b4c-38c5eaeb94dfa29b1ff95decb168429f27\" -e \"https://api.postman.com/environments/17374712-2d65732e-e417-419e-97f1-026f5fe29d08?apikey=PMAK-65e32a57cb2b2000013b7b4c-38c5eaeb94dfa29b1ff95decb168429f27\"",
+    "newman-reset": "newman run \"https://api.postman.com/collections/17374712-dfefc5ec-2330-443b-b2d7-ce7e459e5fca?apikey=PMAK-65e32a57cb2b2000013b7b4c-38c5eaeb94dfa29b1ff95decb168429f27\" -e \"https://api.postman.com/environments/17374712-2d65732e-e417-419e-97f1-026f5fe29d08?apikey=PMAK-65e32a57cb2b2000013b7b4c-38c5eaeb94dfa29b1ff95decb168429f27\""
   },
   "keywords": [],
   "author": "",

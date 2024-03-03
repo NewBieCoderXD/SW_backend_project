@@ -17,6 +17,21 @@ exports.checkSuperUserToken = async function(req,res,next){
         next();
     }
 }
+exports.checkTokenIfExists = async function(req,res,next){
+    let token;
+    if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')){
+        token = req.headers.authorization.split(' ')[1];
+    }
+    try{
+        const decoded = jwt.verify(token,process.env.JWT_SECRET);
+        req.user = await User.findById(decoded.id);
+    }catch(err){
+        console.log(err)
+    }
+    finally{
+        next();
+    }
+}
 exports.checkToken = async (req,res,next) =>{
     let token;
     if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')){
