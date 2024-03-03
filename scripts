@@ -1,3 +1,0 @@
-newman run "https://api.postman.com/collections/17374712-3b8957fa-63c8-4010-a7d5-6e80184f3e29?apikey=PMAK-65e32a57cb2b2000013b7b4c-38c5eaeb94dfa29b1ff95decb168429f27" -e "https://api.postman.com/environments/17374712-2d65732e-e417-419e-97f1-026f5fe29d08?apikey=PMAK-65e32a57cb2b2000013b7b4c-38c5eaeb94dfa29b1ff95decb168429f27"
-
-newman run "https://api.postman.com/collections/17374712-bdb0a617-37be-45d3-8ad0-9a6145485a32?apikey=PMAK-65e32a57cb2b2000013b7b4c-38c5eaeb94dfa29b1ff95decb168429f27" -e "https://api.postman.com/environments/17374712-2d65732e-e417-419e-97f1-026f5fe29d08?apikey=PMAK-65e32a57cb2b2000013b7b4c-38c5eaeb94dfa29b1ff95decb168429f27"

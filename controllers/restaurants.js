@@ -1,5 +1,8 @@
+const { GridFsStorage } = require('multer-gridfs-storage');
 const { populate } = require('../models/Reservation');
 const Restaurant = require('../models/Restaurant');
+const { storage } = require('../middleware/upload');
+const { getBucket } = require('../config/connectDB');
 
 //@desc   : Get all restaurants
 //@route  : GET /api/v1/restaurant
@@ -71,7 +74,7 @@ exports.getRestaurants = async (req,res,next) => {
 //@access : Public
 exports.getRestaurant = async (req,res,next) => {
     try {
-        const restaurant = await Restaurtant.findById(req.params.id);
+        const restaurant = await Restaurant.findById(req.params.id);
         if(!restaurant){
             return res.status(404).json({success: false, message: 'Not found'});
         }
@@ -80,6 +83,7 @@ exports.getRestaurant = async (req,res,next) => {
             data: restaurant
         })
     } catch(err) {
+        console.log(err)
         res.status(500).json({success: false, message: 'Not valid ID'});
     }
 }
@@ -135,5 +139,42 @@ exports.deleteRestaurant = async (req,res,next) => {
         res.status(200).json({success: true, data: {}});
     } catch(err) {
         res.status(400).json({success: false, message: 'Not valid ID'});
+    }
+}
+exports.uploadImage = async function(req,res,next){
+    let restaurant
+    if(req.params.id){
+        restaurant = await Restaurant.findById(req.params.id);
+    }
+    
+    if(!restaurant){
+        return res.status(404).json({success: false, message: `Not found restaurant with id ${req.params.id}`});
+    }
+
+    return res.status(200).json({
+        success:true,
+        url:`${req.protocol}://${req.get('host')}/api/v1/restaurants/${req.params.id}/image`
+    })
+}
+
+exports.downloadImage = async function(req,res,next){
+    try{
+        const bucket = getBucket();
+        const downloadStream = await bucket.openDownloadStreamByName(req.params.id);
+        downloadStream.on('error', (err) => {
+            console.log(err);
+            res.status(404).json({
+                success: false,
+                message: "This restaurant has no images"
+            });
+        });
+        downloadStream.pipe(res);
+    }
+    catch(err){
+        console.log(err);
+        res.status(404).json({
+            success:false,
+            message:"this restaurant has no images"
+        })
     }
 }
