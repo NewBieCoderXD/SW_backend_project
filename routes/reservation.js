@@ -1,6 +1,6 @@
 const express = require("express");
 const { checkToken, checkRole } = require("../middleware/auth");
-const { getReservations, addReservation, updateReservation } = require("../controllers/reservation");
+const { getReservations, addReservation, updateReservation, deleteReservation } = require("../controllers/reservation");
 const router = express.Router();
 
 router.route("/")
@@ -8,4 +8,5 @@ router.route("/")
     .post(checkToken,addReservation)
 router.route("/:id")
     .put(checkToken,checkRole("user","admin"),updateReservation)
+    .delete(checkToken,checkRole("user","admin"),deleteReservation)
 module.exports=router

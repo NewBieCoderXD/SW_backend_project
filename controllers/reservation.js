@@ -93,7 +93,17 @@ exports.updateReservation = async function(req,res,next){
 }
 exports.deleteReservation = async function(req,res,next){
     try{
-
+        const reservation = await Reservation.findById(req.params.id);
+        if(!reservation){
+            return res.status(404).json({
+                success:false
+            })
+        }
+        await reservation.deleteOne();
+        return res.status(200).json({
+            success:true,
+            data:{}
+        })
     }
     catch(err){
         console.log(err)

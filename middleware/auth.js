@@ -1,10 +1,7 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 exports.checkSuperUserToken = async function(req,res,next){
-    let token;
-    if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')){
-        token = req.headers.authorization.split(' ')[1];
-    }
+    let token=getTokenFromReq(req);
     try{
         const decoded = jwt.verify(token,process.env.JWT_SECRET);
         if(decoded.superuser == "superuser"){
@@ -18,10 +15,7 @@ exports.checkSuperUserToken = async function(req,res,next){
     }
 }
 exports.checkTokenIfExists = async function(req,res,next){
-    let token;
-    if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')){
-        token = req.headers.authorization.split(' ')[1];
-    }
+    let token=getTokenFromReq(req);
     try{
         const decoded = jwt.verify(token,process.env.JWT_SECRET);
         req.user = await User.findById(decoded.id);
@@ -33,10 +27,7 @@ exports.checkTokenIfExists = async function(req,res,next){
     }
 }
 exports.checkToken = async (req,res,next) =>{
-    let token;
-    if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')){
-        token = req.headers.authorization.split(' ')[1];
-    }
+    let token=getTokenFromReq(req);
 
     if(!token) {
         return res.status(401).json({success: false, message: 'Not authorize to access this route'});
@@ -62,4 +53,10 @@ exports.checkRole=function(...roles){
             message:"Unauthorized"
         })
     }
+}
+function getTokenFromReq(req){
+    if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')){
+        return req.headers.authorization.split(' ')[1];
+    }
+    return null;
 }
