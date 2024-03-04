@@ -157,15 +157,6 @@ exports.deleteRestaurant = async (req,res,next) => {
     }
 }
 exports.uploadImage = async function(req,res,next){
-    let restaurant
-    if(req.params.id){
-        restaurant = await Restaurant.findById(req.params.id);
-    }
-    
-    if(!restaurant){
-        return res.status(404).json({success: false, message: `Not found restaurant with id ${req.params.id}`});
-    }
-
     return res.status(200).json({
         success:true,
         url:`${req.protocol}://${req.get('host')}/api/v1/restaurants/${req.params.id}/image`

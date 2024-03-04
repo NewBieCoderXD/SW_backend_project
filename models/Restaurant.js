@@ -34,8 +34,11 @@ const Restaurant = new mongoose.Schema({
     toObject: {virtuals:true}
 })
 Restaurant.pre("deleteOne",{document:true, query:false},async function(next){
-    const result = await Reservation.deleteMany({
+    await Reservation.deleteMany({
         restaurantId: this._id
+    });
+    await Files.deleteOne({
+        filename: this._id
     });
     next()
 })
