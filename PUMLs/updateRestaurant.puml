@@ -2,7 +2,7 @@
 
 header Bing Resy Sequence Diagram
 footer Page %page% of %lastpage%
-title "Get Restaurant (GET)"
+title "Get Restaurants (GET)"
 
 participant "client" as client
 participant "<<JavaScript>>\nserver" as server
