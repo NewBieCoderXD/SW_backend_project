@@ -9,7 +9,7 @@ router.route("/")
     .get(checkTokenIfExists,getRestaurants)
     .post(createRestaurant);
 router.route("/:id")
-    .get(getRestaurant)
+    .get(checkTokenIfExists,getRestaurant)
     .put(updateRestaurant)
     .delete(deleteRestaurant)
 router.route("/:id/image")

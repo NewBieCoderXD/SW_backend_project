@@ -1,0 +1,27 @@
+@startuml
+
+header Bing Resy Sequence Diagram
+footer Page %page% of %lastpage%
+title "Get Restaurants (GET)"
+
+participant "client" as client
+participant "<<JavaScript>>\nserver" as server
+participant "<<Router>>\restaurants" as restaurantsRouter
+participant "<<Controller>>\nrestaurants" as restaurantsController
+participant "<<Model>>\nrestaurants" as restaurantsModel
+database "<<MongoDB>>\nrestaurants" as restaurantsDatabase
+
+client -> server ++: req.get("/api/v1/restaurants")
+server -> restaurantsRouter ++: app.use("/api/v1/restaurants",restaurantRouter)
+restaurantsRouter -> restaurantsController ++: getRestaurants()
+alt Have valid login token
+    restaurantsController -> restaurantsModel ++: Restaurant.find(JSON.parse(queryStr))\n.populate(populateQuery)\n.select(fields)\n.sort(sortBy) or .sort("name")\n.skip(startIndex)\n.limit(limit)
+else Doesn't have valid login token
+    restaurantsController -> restaurantsModel ++: Restaurant.find(JSON.parse(queryStr))\n.select(fields)\n.sort(sortBy) or .sort("name")\n.skip(startIndex)\n.limit(limit)
+end
+restaurantsModel -> restaurantsDatabase ++:RestaurantSchema
+restaurantsDatabase -> restaurantsModel --:restaurants
+restaurantsModel -> restaurantsController --:restaurants
+restaurantsController -> client --:response
+
+@enduml

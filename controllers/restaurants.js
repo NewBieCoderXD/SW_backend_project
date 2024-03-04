@@ -74,7 +74,22 @@ exports.getRestaurants = async (req,res,next) => {
 //@access : Public
 exports.getRestaurant = async (req,res,next) => {
     try {
-        const restaurant = await Restaurant.findById(req.params.id);
+        let query =  Restaurant.findById(req.params.id);
+
+        if(req.user){
+            let populateQuery = {
+                path:'reservations'
+            }
+            if(req.user.role!="admin"){
+                populateQuery.match={
+                    reservorId: req.user._id
+                }
+            }
+            // console.log(populateQuery);
+            query = query.populate(populateQuery)
+        }
+
+        const restaurant = await query;
         if(!restaurant){
             return res.status(404).json({success: false, message: 'Not found'});
         }
