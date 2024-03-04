@@ -2,25 +2,25 @@
 
 header Bing Resy Sequence Diagram
 footer Page %page% of %lastpage%
-title "Get Restaurant (GET)"
+title "Update Restaurants (PUT)"
 
 participant "client" as client
 participant "<<JavaScript>>\nserver" as server
-participant "<<Router>>\restaurants" as restaurantsRouter
+participant "<<Router>>\nrestaurants" as restaurantsRouter
 participant "<<Controller>>\nrestaurants" as restaurantsController
 participant "<<Model>>\nrestaurants" as restaurantsModel
 database "<<MongoDB>>\nrestaurants" as restaurantsDatabase
 
-client -> server ++: req.get("/api/v1/restaurant/:id")
+client -> server ++: req.put("/api/v1/restaurant/:id")
 server -> restaurantsRouter ++: app.use("/api/v1/restaurants",restaurantRouter)
-restaurantsRouter -> restaurantsController ++: getRestaurants()
-alt Have valid login token
+restaurantsRouter -> restaurantsController ++: updateRestaurant()
+alt is admin
     restaurantsController -> restaurantsModel ++: Restaurant.findById(req.params.id).populate(populateQuery)
-else Doesn't have valid login token
-    restaurantsController -> restaurantsModel --: Restaurant.findById(req.params.id)
+    restaurantsModel -> restaurantsDatabase ++:RestaurantSchema
+    restaurantsDatabase -> restaurantsModel --:restaurants
+else isn't admin
+    restaurantsController -> client --: response status 400
 end
-restaurantsModel -> restaurantsDatabase ++:RestaurantSchema
-restaurantsDatabase -> restaurantsModel --:restaurants
 restaurantsModel -> restaurantsController --:restaurants
 restaurantsController -> client --:response
 

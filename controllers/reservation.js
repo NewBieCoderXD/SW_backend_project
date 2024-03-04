@@ -50,7 +50,8 @@ exports.addReservation = async function(req,res,next){
         let {restaurantId,reservationPeriod,reservationDate,restaurantName} = req.body;
         const reservorId = req.user.id
         let existingReservations = Reservation.find({reservorId});
-        if(await Reservation.countDocuments(existingReservations)>=3 && req.user.role!="admin"){
+        const existingReservationsCount = await Reservation.countDocuments(existingReservations);
+        if(existingReservationsCount>=3 && req.user.role!="admin"){
             return res.status(400).json({
                 success:false,
                 message:"reservations exceeding limits"

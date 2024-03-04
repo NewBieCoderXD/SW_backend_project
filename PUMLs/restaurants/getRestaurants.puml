@@ -6,7 +6,7 @@ title "Get Restaurants (GET)"
 
 participant "client" as client
 participant "<<JavaScript>>\nserver" as server
-participant "<<Router>>\restaurants" as restaurantsRouter
+participant "<<Router>>\nrestaurants" as restaurantsRouter
 participant "<<Controller>>\nrestaurants" as restaurantsController
 participant "<<Model>>\nrestaurants" as restaurantsModel
 database "<<MongoDB>>\nrestaurants" as restaurantsDatabase
