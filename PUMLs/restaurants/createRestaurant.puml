@@ -14,14 +14,14 @@ database "<<MongoDB>>\nrestaurants" as restaurantsDatabase
 client -> server ++: req.post("/api/v1/restaurant/:id")
 server -> restaurantsRouter ++: app.use("/api/v1/restaurants",restaurantRouter)
 restaurantsRouter -> restaurantsController ++: createRestaurant()
-alt is admin
+alt isn't admin
+    restaurantsController -> client ++: response status 400
+else is admin
     restaurantsController -> restaurantsModel ++: Restaurant.create(req.body)
     restaurantsModel -> restaurantsDatabase ++:RestaurantSchema
     restaurantsDatabase -> restaurantsModel --:restaurants
-else isn't admin
-    restaurantsController -> client --: response status 400
+    restaurantsModel -> restaurantsController --:restaurants
+    restaurantsController -> client ++:response
 end
-restaurantsModel -> restaurantsController --:restaurants
-restaurantsController -> client --:response
 
 @enduml

@@ -17,9 +17,10 @@ reservationsRouter -> reservationsController ++: deleteReservation()
 reservationsController -> reservationsModel ++: Reservation.findById(req.params.id)
 reservationsModel -> reservationsDatabase ++:Reservationschema
 reservationsDatabase -> reservationsModel --:reservation
-reservationsModel -> reservationsController ++: reservation
+reservationsModel -> reservationsController --: reservation
 reservationsController -> reservationsModel ++: reservation.deleteOne()
 reservationsModel -> reservationsDatabase ++: Reservationschema
+reservationsDatabase -> reservationsModel --: delete status
 reservationsController -> client --:response
 
 @enduml

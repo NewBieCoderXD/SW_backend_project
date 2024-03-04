@@ -16,12 +16,15 @@ server -> restaurantsRouter ++: app.use("/api/v1/restaurants",restaurantRouter)
 restaurantsRouter -> restaurantsController ++: getRestaurants()
 alt Have valid login token
     restaurantsController -> restaurantsModel ++: Restaurant.find(JSON.parse(queryStr))\n.populate(populateQuery)\n.select(fields)\n.sort(sortBy) or .sort("name")\n.skip(startIndex)\n.limit(limit)
+    restaurantsModel -> restaurantsDatabase ++:RestaurantSchema
+    restaurantsDatabase -> restaurantsModel --:restaurants
+    restaurantsModel -> restaurantsController --:restaurants
 else Doesn't have valid login token
-    restaurantsController -> restaurantsModel --: Restaurant.find(JSON.parse(queryStr))\n.select(fields)\n.sort(sortBy) or .sort("name")\n.skip(startIndex)\n.limit(limit)
+    restaurantsController -> restaurantsModel ++: Restaurant.find(JSON.parse(queryStr))\n.select(fields)\n.sort(sortBy) or .sort("name")\n.skip(startIndex)\n.limit(limit)
+    restaurantsModel -> restaurantsDatabase ++:RestaurantSchema
+    restaurantsDatabase -> restaurantsModel --:restaurants
+    restaurantsModel -> restaurantsController --:restaurants
 end
-restaurantsModel -> restaurantsDatabase ++:RestaurantSchema
-restaurantsDatabase -> restaurantsModel --:restaurants
-restaurantsModel -> restaurantsController --:restaurants
-restaurantsController -> client --:response
+restaurantsController -> client ++:response
 
 @enduml
