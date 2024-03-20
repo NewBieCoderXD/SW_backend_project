@@ -13,6 +13,6 @@ router.route("/:id")
     .put(checkToken, checkRole("admin"), updateRestaurant)
     .delete(checkToken, checkRole("admin"), deleteRestaurant)
 router.route("/:id/image")
-    .post(upload("image",["image/jpeg","image/png"]),uploadImage)
+    .post(checkToken, checkRole("admin"), upload("image",["image/jpeg","image/png"]),uploadImage)
     .get(downloadImage)
 module.exports=router
