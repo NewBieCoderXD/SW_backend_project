@@ -37,6 +37,7 @@ exports.register = async (req,res,next) => {
 //@route  : POST /api/v1/auth/login
 //@access : Public
 exports.login = async (req,res,next)=>{
+    console.log("login attempt",req.body)
     const {username, email,password} = req.body;
     if ((!username && !email) || !password){
         return res.status(400).json({success: false, msg: 'Please provide an emall and password'});

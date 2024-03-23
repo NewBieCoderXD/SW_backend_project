@@ -153,6 +153,7 @@ exports.deleteRestaurant = async (req,res,next) => {
         await restaurant.deleteOne();
         res.status(200).json({success: true, data: {}});
     } catch(err) {
+        console.log(err)
         res.status(400).json({success: false, message: 'Not valid ID'});
     }
 }

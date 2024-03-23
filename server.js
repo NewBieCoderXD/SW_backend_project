@@ -9,11 +9,13 @@ const restaurantRoute = require("./routes/restaurant");
 const authRoute = require("./routes/auth");
 const { connectDB } = require("./config/connectDB");
 const reservationRouter = require("./routes/reservation");
-
+const cors = require('cors')
 const app = express();
 
 connectDB();
 
+app.use(cors())
+app.options('*', cors());
 app.use(express.json())
 app.use(cookieParser());
 app.use("/api/v1/restaurants",restaurantRoute);

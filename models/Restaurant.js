@@ -2,6 +2,7 @@ const mongoose = require("mongoose")
 const {timeRegex,invalidTimeMsg} = require("../config/constants")
 const PeriodSubSchema = require("./Period")
 const Reservation = require("./Reservation")
+const Files = require("./Files")
 const Restaurant = new mongoose.Schema({
     name:{
         type: String,
@@ -28,6 +29,9 @@ const Restaurant = new mongoose.Schema({
     availableReservationPeriod:{
         type: [PeriodSubSchema],
         minLength:1
+    },
+    tags:{
+        type: [String],
     }
 },{
     toJSON: {virtuals:true},
