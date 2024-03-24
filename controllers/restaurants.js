@@ -14,7 +14,7 @@ exports.getRestaurants = async (req,res,next) => {
     removeFields.forEach(params => delete reqQuery[params]);
 
     let queryStr = JSON.stringify(reqQuery);
-    queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`);
+    queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in|regex)\b/g, match => `$${match}`);
     query = Restaurant.find(JSON.parse(queryStr));
 
     if(req.user){
@@ -52,7 +52,7 @@ exports.getRestaurants = async (req,res,next) => {
         
         const result = await query;
 
-        const pagination = {limit};
+        const pagination = {limit,total};
 
         if (endIndex < total){
             pagination.next = {page: page+1}
