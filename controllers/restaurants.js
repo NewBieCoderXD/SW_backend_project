@@ -112,6 +112,7 @@ exports.createRestaurant = async (req,res,next) => {
         res.status(201).json({success: true, data: restaurant});
     }
     catch(err){
+        console.log(err)
         res.status(400).json({
             success:false,
             message:"restaurant with this name already exists"
@@ -124,7 +125,7 @@ exports.createRestaurant = async (req,res,next) => {
 //@access : Private
 exports.updateRestaurant = async (req,res,next) => {
     try {
-        const restaurant = await Restaurant.findByIdAndUpdate(req.params.id);
+        const restaurant = await Restaurant.findByIdAndUpdate(req.params.id,req.body);
         
         if(!restaurant){
             return res.status(404).json({success: false, message: `Not found restaurant with id ${req.params.id}`});
